@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WANTHUB - Ultimate Digital Power Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', 'Arial', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* WebGL Canvas */
+        #webgl-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Image Gallery Background */
+        .image-gallery {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.7;
+        }
+
+        .gallery-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            animation: slideshow 18s infinite;
+        }
+
+        .gallery-image:nth-child(1) { animation-delay: 0s; }
+        .gallery-image:nth-child(2) { animation-delay: 3s; }
+        .gallery-image:nth-child(3) { animation-delay: 6s; }
+        .gallery-image:nth-child(4) { animation-delay: 9s; }
+        .gallery-image:nth-child(5) { animation-delay: 12s; }
+        .gallery-image:nth-child(6) { animation-delay: 15s; }
+
+        @keyframes slideshow {
+            0%, 16.66% { opacity: 0; transform: scale(1.1); }
+            8.33%, 25% { opacity: 0.5; transform: scale(1); }
+            33.33%, 100% { opacity: 0; transform: scale(1.05); }
+        }
+
+        /* Content Container */
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%);
+        }
+
+        .hero-content {
+            max-width: 900px;
+            padding: 2rem;
+            animation: heroGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes heroGlow {
+            from { filter: drop-shadow(0 0 20px rgba(0, 255, 204, 0.5)); }
+            to { filter: drop-shadow(0 0 40px rgba(0, 255, 204, 0.8)); }
+        }
+
+        .logo-section {
+            margin-bottom: 2rem;
+        }
+
+        .logo-text {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #00ffcc, #0099ff, #ff00ff, #00ffcc);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s ease-in-out infinite;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .tagline {
+            font-size: 1.8rem;
+            margin: 1rem 0 2rem;
+            color: #00ffcc;
+            text-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
+            font-weight: 300;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 20px 50px;
+            background: linear-gradient(45deg, #00ffcc, #0099ff);
+            color: #000;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 50px rgba(0, 255, 204, 0.8);
+        }
+
+        /* Categories Section */
+        .categories {
+            padding: 100px 0;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(0, 50, 100, 0.3));
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3.5rem;
+            margin-bottom: 4rem;
+            background: linear-gradient(45deg, #ff00ff, #00ffcc, #0099ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 900;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, rgba(0, 255, 204, 0.1), rgba(0, 153, 255, 0.1));
+            border: 2px solid rgba(0, 255, 204, 0.3);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ffcc, #0099ff, #ff00ff, #00ffcc);
+            border-radius: 20px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.4s ease;
+            animation: borderGlow 3s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .category-card:hover::before {
+            opacity: 1;
+        }
+
+        .category-card:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 255, 204, 0.4);
+        }
+
+        .category-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #00ffcc, #ff00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .category-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #00ffcc;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+        }
+
+        .category-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Video Section */
+        .video-showcase {
+            padding: 100px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .video-container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 255, 204, 0.5);
+        }
+
+        .video-container video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 20px;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(0, 255, 204, 0.1), rgba(255, 0, 255, 0.1));
+            pointer-events: none;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Promo Banner */
+        .promo-banner {
+            padding: 80px 0;
+            background: linear-gradient(45deg, rgba(255, 0, 255, 0.2), rgba(0, 255, 204, 0.2));
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .promo-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .promo-title {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            animation: glowText 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glowText {
+            from { text-shadow: 0 0 20px rgba(0, 255, 204, 0.8); }
+            to { text-shadow: 0 0 40px rgba(255, 0, 255, 0.8); }
+        }
+
+        /* Footer */
+        .footer {
+            padding: 50px 0;
+            background: rgba(0, 0, 0, 0.9);
+            text-align: center;
+            border-top: 2px solid rgba(0, 255, 204, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo-text {
+                font-size: 3rem;
+            }
+            
+            .tagline {
+                font-size: 1.3rem;
+            }
+            
+            .section-title {
+                font-size: 2.5rem;
+            }
+            
+            .categories-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .promo-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Particle Canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+    </style>
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+    <!-- Image Gallery Background -->
+    <div class="image-gallery">
+        <img src="grok_image_1qhu4j.jpg" class="gallery-image" alt="Wanthub Background 1">
+        <img src="grok_image_n2d1sm.jpg" class="gallery-image" alt="Wanthub Background 2">
+        <img src="grok_image_p233ft.jpg" class="gallery-image" alt="Wanthub Background 3">
+        <img src="grok_image_xkjmma5.jpg" class="gallery-image" alt="Wanthub Background 4">
+        <img src="grok_image_xvw4q00.jpg" class="gallery-image" alt="Wanthub Background 5">
+        <img src="grok_image_xymyg7y.jpg" class="gallery-image" alt="Wanthub Background 6">
+    </div>
+
+    <!-- WebGL Canvas -->
+    <canvas id="webgl-canvas"></canvas>
+    
+    <!-- Particle Canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="logo-section">
+                    <div class="logo-text">WANTHUB</div>
+                    <p class="tagline">GAIN ALL POWERS • GAIN DIGITAL SUPREMACY</p>
+                </div>
+                <a href="#categories" class="cta-button">Enter Digital Universe</a>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section id="categories" class="categories">
+            <h2 class="section-title">Digital Power Categories</h2>
+            <div class="categories-grid">
+                <div class="category-card">
+                    <div class="category-icon">🎬</div>
+                    <h3 class="category-title">Movies</h3>
+                    <p class="category-description">Access premium movie collections, streaming services, and exclusive entertainment content from around the globe.</p>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-icon">🎵</div>
+                    <h3 class="category-title">Songs</h3>
+                    <p class="category-description">Unlimited music access across all genres, exclusive tracks, and personalized audio experiences.</p>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-icon">📹</div>
+                    <h3 class="category-title">Videos</h3>
+                    <p class="category-description">Professional video content creation tools, editing software, and comprehensive video libraries.</p>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-icon">💼</div>
+                    <h3 class="category-title">Private Projects</h3>
+                    <p class="category-description">Hire experts for private custom projects, exclusive development, and tailored digital solutions.</p>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-icon">📱</div>
+                    <h3 class="category-title">Telegram Channels</h3>
+                    <p class="category-description">Premium Telegram channels, exclusive communities, and specialized content subscriptions.</p>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-icon">🔐</div>
+                    <h3 class="category-title">Secret Files</h3>
+                    <p class="category-description">Access exclusive digital resources, confidential information, and premium content vaults.</p>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-icon">⚡</div>
+                    <h3 class="category-title">Enethical Objects</h3>
+                    <p class="category-description">Advanced digital tools, powerful automation resources, and cutting-edge technology solutions.</p>
+                </div>
+                
+                <div class="category-card">
+                    <div class="category-icon">🎯</div>
+                    <h3 class="category-title">Business Design</h3>
+                    <p class="category-description">Professional business solutions, custom designs, and enterprise-level digital transformation.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Video Showcase -->
+        <section class="video-showcase">
+            <h2 class="section-title">Experience WANTHUB in Action</h2>
+            <div class="video-container">
+                <video autoplay muted loop controls>
+                    <source src="grok_video_2025-12-21-14-27-29.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay"></div>
+            </div>
+        </section>
+
+        <!-- Additional Video Section -->
+        <section class="video-showcase" style="background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(100, 0, 100, 0.3));">
+            <div class="video-container">
+                <video autoplay muted loop controls>
+                    <source src="grok_video_2025-12-21-14-32-33.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay"></div>
+            </div>
+        </section>
+
+        <!-- Final Video Section -->
+        <section class="video-showcase" style="background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(0, 100, 100, 0.3));">
+            <div class="video-container">
+                <video autoplay muted loop controls>
+                    <source src="grok_video_2025-12-21-14-39-05.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-overlay"></div>
+            </div>
+        </section>
+
+        <!-- Promo Banner -->
+        <section class="promo-banner">
+            <div class="promo-content">
+                <h2 class="promo-title">POWERFUL DIGITAL AUTOMATION RESOURCES</h2>
+                <p class="tagline">Transform Your Digital Experience • Access Unlimited Possibilities</p>
+                <a href="#categories" class="cta-button" style="margin-top: 2rem;">Start Your Journey</a>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 WANTHUB • Digital Power Hub • All Rights Reserved</p>
+        </footer>
+    </div>
+
+    <script>
+        // WebGL Background Animation
+        const canvas = document.getElementById('webgl-canvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            if (gl) {
+                gl.viewport(0, 0, canvas.width, canvas.height);
+            }
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Simple WebGL gradient effect
+        if (gl) {
+            const vertexShaderSource = `
+                attribute vec2 position;
+                void main() {
+                    gl_Position = vec4(position, 0.0, 1.0);
+                }
+            `;
+
+            const fragmentShaderSource = `
+                precision mediump float;
+                uniform float time;
+                uniform vec2 resolution;
+                
+                void main() {
+                    vec2 st = gl_FragCoord.xy / resolution.xy;
+                    vec3 color = vec3(0.0);
+                    
+                    // Animated gradient
+                    color.r = abs(sin(time * 0.5 + st.x * 3.0)) * 0.5;
+                    color.g = abs(cos(time * 0.3 + st.y * 3.0)) * 0.8;
+                    color.b = abs(sin(time * 0.7 + (st.x + st.y) * 2.0)) * 1.0;
+                    
+                    // Add some noise/static effect
+                    float noise = fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453);
+                    color += noise * 0.05;
+                    
+                    gl_FragColor = vec4(color * 0.3, 0.8);
+                }
+            `;
+
+            function createShader(type, source) {
+                const shader = gl.createShader(type);
+                gl.shaderSource(shader, source);
+                gl.compileShader(shader);
+                return shader;
+            }
+
+            const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
+            const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+            const program = gl.createProgram();
+            gl.attachShader(program, vertexShader);
+            gl.attachShader(program, fragmentShader);
+            gl.linkProgram(program);
+            gl.useProgram(program);
+
+            const positionBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                -1, -1, 1, -1, -1, 1,
+                -1, 1, 1, -1, 1, 1
+            ]), gl.STATIC_DRAW);
+
+            const positionLocation = gl.getAttribLocation(program, 'position');
+            gl.enableVertexAttribArray(positionLocation);
+            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+            const timeLocation = gl.getUniformLocation(program, 'time');
+            const resolutionLocation = gl.getUniformLocation(program, 'resolution');
+
+            function render(time) {
+                gl.uniform1f(timeLocation, time * 0.001);
+                gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+                gl.drawArrays(gl.TRIANGLES, 0, 6);
+                requestAnimationFrame(render);
+            }
+            render(0);
+        }
+
+        // Particle System
+        const particleCanvas = document.getElementById('particle-canvas');
+        const particleCtx = particleCanvas.getContext('2d');
+
+        function resizeParticleCanvas() {
+            particleCanvas.width = window.innerWidth;
+            particleCanvas.height = window.innerHeight;
+        }
+        resizeParticleCanvas();
+        window.addEventListener('resize', resizeParticleCanvas);
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * particleCanvas.width;
+                this.y = Math.random() * particleCanvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.5 + 0.3;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > particleCanvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > particleCanvas.height) this.speedY *= -1;
+            }
+
+            draw() {
+                particleCtx.fillStyle = `rgba(0, 255, 204, ${this.opacity})`;
+                particleCtx.beginPath();
+                particleCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                particleCtx.fill();
+            }
+        }
+
+        const particles = [];
+        for (let i = 0; i < 100; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+            
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            // Draw connections
+            particles.forEach((p1, i) => {
+                particles.slice(i + 1).forEach(p2 => {
+                    const distance = Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+                    if (distance < 100) {
+                        particleCtx.strokeStyle = `rgba(0, 255, 204, ${0.2 * (1 - distance / 100)})`;
+                        particleCtx.lineWidth = 0.5;
+                        particleCtx.beginPath();
+                        particleCtx.moveTo(p1.x, p1.y);
+                        particleCtx.lineTo(p2.x, p2.y);
+                        particleCtx.stroke();
+                    }
+                });
+            });
+
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 1s ease-out forwards';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.category-card').forEach(card => {
+            card.style.opacity = '0';
+            observer.observe(card);
+        });
+
+        // Add fadeInUp animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(50px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
